@@ -272,3 +272,9 @@ window.addEventListener('keyup', (e) => {
 // ================= IMPORT / EXPORT / LOAD =================
 // Init IO (From IO.js)
 initIO(engine, inputs);
+
+// Setup Editable Values
+document.querySelectorAll('input[type="range"]').forEach(range => {
+    makeValueEditable(range);
+    updateValueDisplay(range); // Init display
+});

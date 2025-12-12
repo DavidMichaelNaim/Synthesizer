@@ -1,246 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Synth Pro</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 
-<body>
-    <div class="synth-container">
-        <header>
-            <h1>WEB SYNTH <span>PRO</span></h1>
-            <div class="io-controls">
-                <button id="save-btn" class="btn-secondary">Save Local</button>
-                <button id="export-btn" class="btn-primary">Export (JSON)</button>
-                <label for="import-file" class="btn-secondary">Import</label>
+<body class="bg-dark text-light">
+    <div class="container py-4">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+            <h1 class="h3 m-0">WEB SYNTH <span class="text-info fw-bold">PRO</span></h1>
+            <div class="d-flex gap-2">
+                <button id="save-btn" class="btn btn-secondary btn-sm">Save Local</button>
+                <button id="export-btn" class="btn btn-info btn-sm fw-bold">Export (JSON)</button>
+                <label for="import-file" class="btn btn-secondary btn-sm mb-0">Import</label>
                 <input type="file" id="import-file" accept=".json" hidden>
             </div>
         </header>
 
-        <div class="main-rack">
+        <!-- Main Rack (Grid) -->
+        <div class="row g-4 mb-4">
+
             <!-- COLUMN 1: SOURCE & MODE -->
-            <div class="rack-column" style="flex: 0.8;"> <!-- Slightly narrower -->
+            <div class="col-lg-4 col-md-12 d-flex flex-column gap-3">
 
                 <!-- Voice Selector -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Voice Select</h3>
-                        <div class="led"></div>
-                    </div>
-                    <div class="knob-row">
-                        <select id="voice-select"
-                            style="width: 100%; padding: 5px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px;">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Voice Select</h6>
+                            <div class="led"></div>
+                        </div>
+                        <select id="voice-select" class="form-select form-select-sm bg-secondary text-light border-0">
                             <option value="custom">Custom Oscillator</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Play Mode (Poly/Mono/Priority) -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Voice Mode</h3>
-                    </div>
-                    <div class="toggle-row">
-                        <label class="toggle-label">Polyphony</label>
-                        <label class="switch">
-                            <input type="checkbox" id="poly-mode" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <label class="status-text" id="poly-text">POLY</label>
-                    </div>
-                    <div class="knob-row" id="priority-container" style="margin-top: 15px; display: none;">
-                        <label style="width: 100%;">
-                            Priority
-                            <select id="mono-priority" style="width: 100%; margin-top: 5px;">
+                <!-- Voice Mode -->
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Voice Mode</h6>
+                        </div>
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-black bg-opacity-25 p-2 rounded border border-secondary">
+                            <label class="small text-muted mb-0">Polyphony</label>
+                            <label class="switch">
+                                <input type="checkbox" id="poly-mode" checked>
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="status-text small fw-bold text-info" id="poly-text">POLY</span>
+                        </div>
+                        <div id="priority-container" class="mt-3" style="display: none;">
+                            <label class="form-label small text-muted w-100">Priority</label>
+                            <select id="mono-priority"
+                                class="form-select form-select-sm bg-secondary text-light border-0">
                                 <option value="last">Last Note</option>
                                 <option value="first">First Note</option>
                                 <option value="low">Low Note</option>
                                 <option value="high">High Note</option>
                             </select>
-                        </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Oscillator (Visual feedback mainly, or tweaks) -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Oscillator</h3>
-                        <div class="led"></div>
-                    </div>
-                    <div class="knob-row">
-                        <label>
-                            Shape
-                            <select id="osc-type">
-                                <option value="sawtooth">Sawtooth</option>
-                                <option value="square">Square</option>
-                                <option value="sine">Sine</option>
-                                <option value="triangle">Triangle</option>
-                            </select>
-                        </label>
+                <!-- Oscillator -->
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Oscillator</h6>
+                            <div class="led"></div>
+                        </div>
+                        <label class="form-label small text-muted">Shape</label>
+                        <select id="osc-type" class="form-select form-select-sm bg-secondary text-light border-0">
+                            <option value="sawtooth">Sawtooth</option>
+                            <option value="square">Square</option>
+                            <option value="sine">Sine</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Master Volume -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Output</h3>
-                    </div>
-                    <div class="slider-container">
-                        <label>Gain</label>
-                        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
-                        <span class="value">50%</span>
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Output</h6>
+                        </div>
+                        <label class="form-label small text-muted">Gain</label>
+                        <div class="d-flex align-items-center">
+                            <input type="range" id="volume" class="form-range flex-grow-1" min="0" max="1" step="0.01"
+                                value="0.5">
+                            <span class="value ms-2 small">50%</span>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- COLUMN 2: SHAPING & TUNING -->
-            <div class="rack-column">
+            <div class="col-lg-4 col-md-12 d-flex flex-column gap-3">
 
                 <!-- ADSR -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Envelope (ADSR)</h3>
-                    </div>
-                    <div class="sliders-row compact">
-                        <div class="slider-v-container">
-                            <input type="range" id="attack" orient="vertical" min="0" max="2" step="0.01" value="0.1">
-                            <label>A</label>
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Envelope (ADSR)</h6>
                         </div>
-                        <div class="slider-v-container">
-                            <input type="range" id="decay" orient="vertical" min="0" max="2" step="0.01" value="0.3">
-                            <label>D</label>
-                        </div>
-                        <div class="slider-v-container">
-                            <input type="range" id="sustain" orient="vertical" min="0" max="1" step="0.01" value="0.5">
-                            <label>S</label>
-                        </div>
-                        <div class="slider-v-container">
-                            <input type="range" id="release" orient="vertical" min="0" max="3" step="0.01" value="1.0">
-                            <label>R</label>
+                        <div class="sliders-row compact d-flex justify-content-around align-items-end"
+                            style="height: 160px;">
+                            <div class="slider-v-container d-flex flex-column align-items-center h-100 flex-grow-1">
+                                <span class="value small text-muted mb-1">0.1s</span>
+                                <input type="range" id="attack" orient="vertical" min="0" max="2" step="0.01"
+                                    value="0.1">
+                                <label class="small text-muted mt-1">A</label>
+                            </div>
+                            <div class="slider-v-container d-flex flex-column align-items-center h-100 flex-grow-1">
+                                <span class="value small text-muted mb-1">0.3s</span>
+                                <input type="range" id="decay" orient="vertical" min="0" max="2" step="0.01"
+                                    value="0.3">
+                                <label class="small text-muted mt-1">D</label>
+                            </div>
+                            <div class="slider-v-container d-flex flex-column align-items-center h-100 flex-grow-1">
+                                <span class="value small text-muted mb-1">0.5</span>
+                                <input type="range" id="sustain" orient="vertical" min="0" max="1" step="0.01"
+                                    value="0.5">
+                                <label class="small text-muted mt-1">S</label>
+                            </div>
+                            <div class="slider-v-container d-flex flex-column align-items-center h-100 flex-grow-1">
+                                <span class="value small text-muted mb-1">1.0s</span>
+                                <input type="range" id="release" orient="vertical" min="0" max="3" step="0.01"
+                                    value="1.0">
+                                <label class="small text-muted mt-1">R</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Filter -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Filter</h3>
-                    </div>
-                    <div class="sliders-row">
-                        <div class="slider-container">
-                            <label>Freq</label>
-                            <input type="range" id="cutoff" min="20" max="10000" step="10" value="2000">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Filter</h6>
                         </div>
-                        <div class="slider-container">
-                            <label>Res</label>
-                            <input type="range" id="resonance" min="0" max="20" step="0.1" value="1">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Freq</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="cutoff" class="form-range flex-grow-1" min="20" max="10000"
+                                    step="10" value="2000">
+                                <span class="value ms-2 small">2000Hz</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">Res</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="resonance" class="form-range flex-grow-1" min="0" max="20"
+                                    step="0.1" value="1">
+                                <span class="value ms-2 small">1</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Scale Tuning -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Scale Tuning</h3>
-                        <div class="led green"></div>
-                    </div>
-                    <p class="module-desc">Click note to toggle quarter tone (-50 cents)</p>
-                    <div class="scale-keyboard" id="scale-controls">
-                        <!-- Generated by JS -->
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button id="reset-scale" class="btn-small">Reset Scale</button>
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Scale Tuning</h6>
+                            <div class="led green"></div>
+                        </div>
+                        <p class="small text-muted text-center mb-2">Click note to toggle quarter tone (-50 cents)</p>
+                        <div class="scale-keyboard d-flex justify-content-center position-relative my-3"
+                            id="scale-controls">
+                            <!-- Generated by JS -->
+                        </div>
+                        <div class="text-center">
+                            <button id="reset-scale" class="btn btn-outline-secondary btn-sm">Reset Scale</button>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- COLUMN 3: EFFECTS STACK -->
-            <div class="rack-column">
-                <div class="rack-label-vertical">EFFECTS RACK</div>
+            <div class="col-lg-4 col-md-12 d-flex flex-column gap-3">
+                <div class="text-secondary small fw-bold mb-1 ps-2 border-start border-3 border-danger">EFFECTS RACK
+                </div>
 
                 <!-- EQ -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Equalizer</h3>
-                        <label class="switch small-switch">
-                            <input type="checkbox" id="eq-enable" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="sliders-row">
-                        <div class="slider-container">
-                            <label>Low</label>
-                            <input type="range" id="eq-low" min="-20" max="20" step="1" value="0">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Equalizer</h6>
+                            <label class="switch small-switch">
+                                <input type="checkbox" id="eq-enable" checked>
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="slider-container">
-                            <label>Mid</label>
-                            <input type="range" id="eq-mid" min="-20" max="20" step="1" value="0">
-                        </div>
-                        <div class="slider-container">
-                            <label>High</label>
-                            <input type="range" id="eq-high" min="-20" max="20" step="1" value="0">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small text-muted">Low</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="range" id="eq-low" class="form-range flex-grow-1" min="-20" max="20"
+                                        step="1" value="0">
+                                    <span class="value ms-2 small">0dB</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted">Mid</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="range" id="eq-mid" class="form-range flex-grow-1" min="-20" max="20"
+                                        step="1" value="0">
+                                    <span class="value ms-2 small">0dB</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted">High</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="range" id="eq-high" class="form-range flex-grow-1" min="-20" max="20"
+                                        step="1" value="0">
+                                    <span class="value ms-2 small">0dB</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Delay -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Delay</h3>
-                        <label class="switch small-switch">
-                            <input type="checkbox" id="delay-enable" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="sliders-row">
-                        <div class="slider-container">
-                            <label>Time</label>
-                            <input type="range" id="delay-time" min="0" max="1" step="0.01" value="0">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Delay</h6>
+                            <label class="switch small-switch">
+                                <input type="checkbox" id="delay-enable" checked>
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="slider-container">
-                            <label>F.Bk</label>
-                            <input type="range" id="delay-feedback" min="0" max="0.9" step="0.01" value="0">
+                        <div class="mb-2">
+                            <label class="form-label small text-muted">Time</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="delay-time" class="form-range flex-grow-1" min="0" max="1"
+                                    step="0.01" value="0">
+                                <span class="value ms-2 small">0s</span>
+                            </div>
                         </div>
-                        <div class="slider-container">
-                            <label>Mix</label>
-                            <input type="range" id="delay-mix" min="0" max="1" step="0.01" value="0">
+                        <div class="mb-2">
+                            <label class="form-label small text-muted">Feedback</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="delay-feedback" class="form-range flex-grow-1" min="0" max="0.9"
+                                    step="0.01" value="0">
+                                <span class="value ms-2 small">0%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">Mix</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="delay-mix" class="form-range flex-grow-1" min="0" max="1"
+                                    step="0.01" value="0">
+                                <span class="value ms-2 small">0%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Reverb -->
-                <div class="control-group module">
-                    <div class="module-header">
-                        <h3>Reverb</h3>
-                        <label class="switch small-switch">
-                            <input type="checkbox" id="reverb-enable" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="sliders-row">
-                        <div class="slider-container">
-                            <label>Size</label>
-                            <input type="range" id="verb-time" min="0.1" max="5" step="0.1" value="2">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                            <h6 class="text-info text-uppercase m-0 small letter-spacing-1">Reverb</h6>
+                            <label class="switch small-switch">
+                                <input type="checkbox" id="reverb-enable" checked>
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="slider-container">
-                            <label>Mix</label>
-                            <input type="range" id="verb-mix" min="0" max="1" step="0.01" value="0">
+                        <div class="mb-2">
+                            <label class="form-label small text-muted">Size</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="verb-time" class="form-range flex-grow-1" min="0.1" max="5"
+                                    step="0.1" value="2">
+                                <span class="value ms-2 small">2s</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">Mix</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" id="verb-mix" class="form-range flex-grow-1" min="0" max="1"
+                                    step="0.01" value="0">
+                                <span class="value ms-2 small">0%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+        </div>
+
+        <!-- Keyboard Section -->
+        <div class="keyboard-container" id="keyboard">
+            <!-- Keys by JS -->
         </div>
     </div>
 
-    <!-- Keyboard Section -->
-    <div class="keyboard-container" id="keyboard">
-        <!-- Keys by JS -->
-    </div>
-
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/Notes.js"></script>
     <script src="js/VoicePresets.js"></script>
     <script src="js/AudioEngine.js"></script>

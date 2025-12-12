@@ -1,8 +1,14 @@
 
 // ================= VISUAL / LOGIC HELPERS =================
+// ================= VISUAL / LOGIC HELPERS =================
 function updateValueDisplay(input) {
-    const nextFn = input.nextElementSibling;
-    if (nextFn && nextFn.classList.contains('value')) {
+    let nextFn = input.nextElementSibling;
+    // Check previous if next is not valid
+    if (!nextFn || (!nextFn.classList.contains('value') && !nextFn.classList.contains('value-input'))) {
+        nextFn = input.previousElementSibling;
+    }
+
+    if (nextFn && (nextFn.classList.contains('value') || nextFn.classList.contains('value-input'))) {
         let suffix = '';
         if (input.id === 'cutoff') suffix = 'Hz';
         else if (['attack', 'decay', 'release', 'delay-time', 'verb-time'].includes(input.id)) suffix = 's';
@@ -12,7 +18,90 @@ function updateValueDisplay(input) {
         let val = parseFloat(input.value);
         if (suffix === '%') val = Math.round(val * 100);
 
-        nextFn.textContent = val + suffix;
+        if (nextFn.tagName === 'INPUT') {
+            // Only update if not currently focused
+            if (document.activeElement !== nextFn) {
+                nextFn.value = val;
+            }
+        } else {
+            nextFn.textContent = val + suffix;
+        }
+    }
+}
+
+function makeValueEditable(rangeInput) {
+    let displaySpan = rangeInput.nextElementSibling;
+
+    // Check previous sibling if next is not the value (fixes vertical sliders layout)
+    if (!displaySpan || (!displaySpan.classList.contains('value') && !displaySpan.classList.contains('value-input'))) {
+        displaySpan = rangeInput.previousElementSibling;
+    }
+
+    if (displaySpan && displaySpan.classList.contains('value')) {
+        // Create Input
+        const numInput = document.createElement('input');
+        numInput.type = 'number';
+        numInput.className = 'value-input';
+        numInput.style.width = '45px';
+        numInput.style.background = 'transparent'; // Cleaner look
+        numInput.style.border = 'none';
+        numInput.style.borderBottom = '1px solid #444'; // Subtle underline
+        numInput.style.color = 'var(--primary-color)'; // Use theme color
+        numInput.style.fontSize = '0.8rem';
+        numInput.style.fontWeight = 'bold';
+        numInput.style.textAlign = 'center';
+        numInput.style.padding = '2px 0';
+        numInput.style.marginLeft = '8px';
+        numInput.style.outline = 'none'; // Remove blue focus ring
+
+        // Adjust style for vertical sliders (where span was before input)
+        if (displaySpan === rangeInput.previousElementSibling) {
+            numInput.style.marginLeft = '0';
+            numInput.style.marginBottom = '5px';
+        }
+
+        // Focus effect
+        numInput.addEventListener('focus', () => numInput.style.borderBottom = '1px solid var(--primary-color)');
+        numInput.addEventListener('blur', () => numInput.style.borderBottom = '1px solid #444');
+
+        // Initial value
+        updateValueDisplay(rangeInput); // Set logic to run once to prep vars if needed, but easier to just init
+
+        // Copy initial value from logic
+        let suffix = '';
+        if (rangeInput.id === 'cutoff') suffix = 'Hz';
+        else if (['attack', 'decay', 'release', 'delay-time', 'verb-time'].includes(rangeInput.id)) suffix = 's';
+        else if (['volume', 'delay-mix', 'verb-mix', 'delay-feedback'].includes(rangeInput.id)) suffix = '%';
+        else if (rangeInput.id.startsWith('eq-')) suffix = 'dB';
+
+        let val = parseFloat(rangeInput.value);
+        if (suffix === '%') val = Math.round(val * 100);
+        numInput.value = val;
+
+        // Listener: Input -> Range
+        numInput.addEventListener('change', () => {
+            let newVal = parseFloat(numInput.value);
+            if (isNaN(newVal)) return;
+
+            // Handle % conversion back
+            if (suffix === '%') newVal = newVal / 100;
+
+            // Clamp
+            const min = parseFloat(rangeInput.min);
+            const max = parseFloat(rangeInput.max);
+            if (newVal < min) newVal = min;
+            if (newVal > max) newVal = max;
+
+            rangeInput.value = newVal;
+            // Trigger range change event so audio engine updates
+            rangeInput.dispatchEvent(new Event('input'));
+            rangeInput.dispatchEvent(new Event('change'));
+        });
+
+        // Listener: Range -> Input (handled by updateValueDisplay called from main)
+
+        rangeInput.parentNode.replaceChild(numInput, displaySpan);
+        // Important: Update standard updateValueDisplay to handle INPUT tag
     }
 }
 
@@ -92,28 +181,24 @@ function renderKeyboard(notes, startNoteCallback, stopNoteCallback) {
 
         if (n.type === 'white') {
             const noteName = document.createElement('span');
-            noteName.textContent = n.note;
-            noteName.style.fontSize = '0.65rem';
-            noteName.style.color = '#777';
+            // Show only Note Letter (e.g. 'C' from 'C3')
+            noteName.textContent = n.note.replace(/[0-9]/g, '');
+            noteName.style.fontSize = '0.75rem';
+            noteName.style.color = '#555';
+            noteName.style.fontWeight = 'bold';
             key.appendChild(noteName);
-
-            // Removed key hint for natural look
-            // const hint = document.createElement('span');
-            // hint.className = 'key-hint';
-            // hint.textContent = n.key.toUpperCase(); // Merged hint
-            // if (n.key.length > 2) hint.style.fontSize = '0.45rem';
-            // key.appendChild(hint);
 
             whiteKeyIndex++;
         } else {
-            // Removed key hint for natural look
-            // const hint = document.createElement('span');
-            // hint.className = 'key-hint';
-            // hint.textContent = n.key.toUpperCase();
-            // hint.style.color = '#999';
-            // hint.style.fontSize = '0.55rem';
-            // if (n.key.length > 2) hint.style.fontSize = '0.4rem';
-            // key.appendChild(hint);
+            // Black keys usually don't have text on synth UIs, usually empty
+            // But if we want note name:
+            /*
+            const noteName = document.createElement('span');
+            noteName.textContent = n.note.replace(/[0-9]/g, '');
+            noteName.style.fontSize = '0.5rem';
+            noteName.style.color = '#ccc';
+            key.appendChild(noteName);
+            */
 
             // Add position class
             key.classList.add(`black-pos-${whiteKeyIndex}`);
