@@ -555,84 +555,28 @@ input:checked+.slider:before {
 }
 
 /* Black Key Positioning Classes */
+/* Black Key Positioning Classes */
 /* Position black keys EXACTLY on the border between white keys */
 /* Formula: (N * 42px) - 13px */
-/* Where N is the number of preceding white keys, 42px is white key width, 13px is half black key width */
 
-.key.black.black-pos-1 {
-    left: calc(1 * 42px - 13px);
-}
-
-/* C#3 */
-.key.black.black-pos-2 {
-    left: calc(2 * 42px - 13px);
-}
-
-/* D#3 */
-.key.black.black-pos-4 {
-    left: calc(4 * 42px - 13px);
-}
-
-/* F#3 */
-.key.black.black-pos-5 {
-    left: calc(5 * 42px - 13px);
-}
-
-/* G#3 */
-.key.black.black-pos-6 {
-    left: calc(6 * 42px - 13px);
-}
-
-/* A#3 */
-
-.key.black.black-pos-8 {
-    left: calc(8 * 42px - 13px);
-}
-
-/* C#4 */
-.key.black.black-pos-9 {
-    left: calc(9 * 42px - 13px);
-}
-
-/* D#4 */
-.key.black.black-pos-11 {
-    left: calc(11 * 42px - 13px);
-}
-
-/* F#4 */
-.key.black.black-pos-12 {
-    left: calc(12 * 42px - 13px);
-}
-
-/* G#4 */
-.key.black.black-pos-13 {
-    left: calc(13 * 42px - 13px);
-}
-
-/* A#4 */
-
-.key.black.black-pos-15 {
-    left: calc(15 * 42px - 13px);
-}
-
-/* C#5 */
-.key.black.black-pos-16 {
-    left: calc(16 * 42px - 13px);
-}
-
-/* D#5 */
-.key.black.black-pos-18 {
-    left: calc(18 * 42px - 13px);
-}
-
-/* F#5 */
-.key.black.black-pos-19 {
-    left: calc(19 * 42px - 13px);
-}
-
-/* G#5 (=) */
-.key.black.black-pos-20 {
-    left: calc(20 * 42px - 13px);
-}
-
-/* A#5 */
+.key.black.black-pos-1 { left: calc(1 * 42px - 13px); }
+.key.black.black-pos-2 { left: calc(2 * 42px - 13px); }
+/* No 3 (E-F) */
+.key.black.black-pos-4 { left: calc(4 * 42px - 13px); }
+.key.black.black-pos-5 { left: calc(5 * 42px - 13px); }
+.key.black.black-pos-6 { left: calc(6 * 42px - 13px); }
+/* No 7 (B-C) */
+.key.black.black-pos-8 { left: calc(8 * 42px - 13px); }
+.key.black.black-pos-9 { left: calc(9 * 42px - 13px); }
+/* No 10 (E-C) */
+.key.black.black-pos-11 { left: calc(11 * 42px - 13px); }
+.key.black.black-pos-12 { left: calc(12 * 42px - 13px); }
+/* No 13 (E-F) */
+.key.black.black-pos-14 { left: calc(14 * 42px - 13px); }
+.key.black.black-pos-15 { left: calc(15 * 42px - 13px); }
+.key.black.black-pos-16 { left: calc(16 * 42px - 13px); }
+/* No 17 (B-C) */
+.key.black.black-pos-18 { left: calc(18 * 42px - 13px); }
+.key.black.black-pos-19 { left: calc(19 * 42px - 13px); }
+/* No 20 (E-F) */
+.key.black.black-pos-21 { left: calc(21 * 42px - 13px); }

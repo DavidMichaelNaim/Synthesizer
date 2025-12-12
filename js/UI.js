@@ -69,11 +69,26 @@ function renderKeyboard(notes, startNoteCallback, stopNoteCallback) {
 
     let whiteKeyIndex = 0;
 
-    notes.forEach((n, i) => {
+    // Deduplicate notes for visual rendering
+    // We want all the keyboard bindings to work (in NOTES), but only one visual key per pitch.
+    const uniqueNotes = [];
+    const seenMap = new Map();
+
+    notes.forEach(n => {
+        if (!seenMap.has(n.note)) {
+            uniqueNotes.push({ ...n });
+            seenMap.set(n.note, uniqueNotes.length - 1);
+        } else {
+            const index = seenMap.get(n.note);
+            uniqueNotes[index].key += ' / ' + n.key;
+        }
+    });
+
+    uniqueNotes.forEach((n, i) => {
         const key = document.createElement('div');
         key.className = `key ${n.type}`;
         key.dataset.note = n.note;
-        key.dataset.key = n.key;
+        key.dataset.key = n.code; // Use Code for ID
 
         if (n.type === 'white') {
             const noteName = document.createElement('span');
@@ -82,19 +97,23 @@ function renderKeyboard(notes, startNoteCallback, stopNoteCallback) {
             noteName.style.color = '#777';
             key.appendChild(noteName);
 
-            const hint = document.createElement('span');
-            hint.className = 'key-hint';
-            hint.textContent = n.key.toUpperCase();
-            key.appendChild(hint);
+            // Removed key hint for natural look
+            // const hint = document.createElement('span');
+            // hint.className = 'key-hint';
+            // hint.textContent = n.key.toUpperCase(); // Merged hint
+            // if (n.key.length > 2) hint.style.fontSize = '0.45rem';
+            // key.appendChild(hint);
 
             whiteKeyIndex++;
         } else {
-            const hint = document.createElement('span');
-            hint.className = 'key-hint';
-            hint.textContent = n.key.toUpperCase();
-            hint.style.color = '#999';
-            hint.style.fontSize = '0.55rem';
-            key.appendChild(hint);
+            // Removed key hint for natural look
+            // const hint = document.createElement('span');
+            // hint.className = 'key-hint';
+            // hint.textContent = n.key.toUpperCase();
+            // hint.style.color = '#999';
+            // hint.style.fontSize = '0.55rem';
+            // if (n.key.length > 2) hint.style.fontSize = '0.4rem';
+            // key.appendChild(hint);
 
             // Add position class
             key.classList.add(`black-pos-${whiteKeyIndex}`);
@@ -102,10 +121,10 @@ function renderKeyboard(notes, startNoteCallback, stopNoteCallback) {
 
         key.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            startNoteCallback(n.key, n.freq, n.note);
+            startNoteCallback(n.code, n.freq, n.note); // Pass Code
         });
-        key.addEventListener('mouseup', () => stopNoteCallback(n.key));
-        key.addEventListener('mouseleave', () => stopNoteCallback(n.key));
+        key.addEventListener('mouseup', () => stopNoteCallback(n.code));
+        key.addEventListener('mouseleave', () => stopNoteCallback(n.code));
 
         keysWrapper.appendChild(key);
     });

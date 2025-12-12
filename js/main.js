@@ -167,7 +167,8 @@ document.getElementById('reset-scale').addEventListener('click', () => {
 function startNote(keyChar, freq, noteName) {
     if (activeNotes.has(keyChar)) return;
 
-    const keyEl = document.querySelector(`.key[data-key="${keyChar}"]`);
+    // Visual: Select by Note Name (handles multiple keys for same note)
+    const keyEl = document.querySelector(`.key[data-note="${noteName}"]`);
     if (keyEl) keyEl.classList.add('active');
 
     engine.ctx.resume();
@@ -185,8 +186,25 @@ function startNote(keyChar, freq, noteName) {
 function stopNote(keyChar) {
     if (!activeNotes.has(keyChar)) return;
 
-    const keyEl = document.querySelector(`.key[data-key="${keyChar}"]`);
-    if (keyEl) keyEl.classList.remove('active');
+    // We need noteName to find the visual element. 
+    // We can rely on activeNotes if we stored it, or find it from NOTES. 
+    // But wait, keyChar (Code) is unique in NOTES.
+    const noteDef = NOTES.find(n => n.code === keyChar);
+    if (noteDef) {
+        // Visual
+        const keyEl = document.querySelector(`.key[data-note="${noteDef.note}"]`);
+        // Only remove active if no other keys for this note are pressed?
+        // Actually, simpler: just remove it. 
+        // If I hold Q and Comma, and release Q, visual might turn off?
+        // Ideally we check if any other active key maps to this note.
+        if (keyEl) {
+            // Check if any other pressed key maps to this note
+            const stillPressed = Array.from(activeNotes.keys()).some(k =>
+                k !== keyChar && NOTES.find(n => n.code === k)?.note === noteDef.note
+            );
+            if (!stillPressed) keyEl.classList.remove('active');
+        }
+    }
 
     if (engine.currentSettings.poly) {
         const nodes = activeNotes.get(keyChar);
@@ -229,21 +247,25 @@ renderKeyboard(NOTES, startNote, stopNote);
 // ================= KEYBOARD EVENTS =================
 const keysDown = new Set();
 window.addEventListener('keydown', (e) => {
-    if (keysDown.has(e.code)) return; // Strict native repeat check
-    const char = e.key.toLowerCase();
-    const note = NOTES.find(n => n.key === char);
+    if (e.repeat) return; // Strict native repeat check
+    const code = e.code;
+    const note = NOTES.find(n => n.code === code);
     if (note) {
-        keysDown.add(e.code);
-        startNote(note.key, note.freq, note.note);
+        if (!keysDown.has(code)) {
+            keysDown.add(code);
+            startNote(note.code, note.freq, note.note);
+        }
     }
 });
 
 window.addEventListener('keyup', (e) => {
-    keysDown.delete(e.code);
-    const char = e.key.toLowerCase();
-    const note = NOTES.find(n => n.key === char);
-    if (note) {
-        stopNote(note.key);
+    const code = e.code;
+    if (keysDown.has(code)) {
+        keysDown.delete(code);
+        const note = NOTES.find(n => n.code === code);
+        if (note) {
+            stopNote(note.code);
+        }
     }
 });
 
