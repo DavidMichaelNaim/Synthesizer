@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Synth Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="synth-container">
+        <header>
+            <h1>WEB SYNTH <span>PRO</span></h1>
+            <div class="io-controls">
+                <button id="save-btn" class="btn-secondary">Save Local</button>
+                <button id="export-btn" class="btn-primary">Export (JSON)</button>
+                <label for="import-file" class="btn-secondary">Import</label>
+                <input type="file" id="import-file" accept=".json" hidden>
+            </div>
+        </header>
+
+        <div class="main-rack">
+            <!-- COLUMN 1: SOURCE & MODE -->
+            <div class="rack-column" style="flex: 0.8;"> <!-- Slightly narrower -->
+
+                <!-- Voice Selector -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Voice Select</h3>
+                        <div class="led"></div>
+                    </div>
+                    <div class="knob-row">
+                        <select id="voice-select"
+                            style="width: 100%; padding: 5px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px;">
+                            <option value="custom">Custom Oscillator</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Play Mode (Poly/Mono/Priority) -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Voice Mode</h3>
+                    </div>
+                    <div class="toggle-row">
+                        <label class="toggle-label">Polyphony</label>
+                        <label class="switch">
+                            <input type="checkbox" id="poly-mode" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <label class="status-text" id="poly-text">POLY</label>
+                    </div>
+                    <div class="knob-row" id="priority-container" style="margin-top: 15px; display: none;">
+                        <label style="width: 100%;">
+                            Priority
+                            <select id="mono-priority" style="width: 100%; margin-top: 5px;">
+                                <option value="last">Last Note</option>
+                                <option value="first">First Note</option>
+                                <option value="low">Low Note</option>
+                                <option value="high">High Note</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Oscillator (Visual feedback mainly, or tweaks) -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Oscillator</h3>
+                        <div class="led"></div>
+                    </div>
+                    <div class="knob-row">
+                        <label>
+                            Shape
+                            <select id="osc-type">
+                                <option value="sawtooth">Sawtooth</option>
+                                <option value="square">Square</option>
+                                <option value="sine">Sine</option>
+                                <option value="triangle">Triangle</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Master Volume -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Output</h3>
+                    </div>
+                    <div class="slider-container">
+                        <label>Gain</label>
+                        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+                        <span class="value">50%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: SHAPING & TUNING -->
+            <div class="rack-column">
+
+                <!-- ADSR -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Envelope (ADSR)</h3>
+                    </div>
+                    <div class="sliders-row compact">
+                        <div class="slider-v-container">
+                            <input type="range" id="attack" orient="vertical" min="0" max="2" step="0.01" value="0.1">
+                            <label>A</label>
+                        </div>
+                        <div class="slider-v-container">
+                            <input type="range" id="decay" orient="vertical" min="0" max="2" step="0.01" value="0.3">
+                            <label>D</label>
+                        </div>
+                        <div class="slider-v-container">
+                            <input type="range" id="sustain" orient="vertical" min="0" max="1" step="0.01" value="0.5">
+                            <label>S</label>
+                        </div>
+                        <div class="slider-v-container">
+                            <input type="range" id="release" orient="vertical" min="0" max="3" step="0.01" value="1.0">
+                            <label>R</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Filter</h3>
+                    </div>
+                    <div class="sliders-row">
+                        <div class="slider-container">
+                            <label>Freq</label>
+                            <input type="range" id="cutoff" min="20" max="10000" step="10" value="2000">
+                        </div>
+                        <div class="slider-container">
+                            <label>Res</label>
+                            <input type="range" id="resonance" min="0" max="20" step="0.1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scale Tuning -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Scale Tuning</h3>
+                        <div class="led green"></div>
+                    </div>
+                    <p class="module-desc">Click note to toggle quarter tone (-50 cents)</p>
+                    <div class="scale-keyboard" id="scale-controls">
+                        <!-- Generated by JS -->
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button id="reset-scale" class="btn-small">Reset Scale</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 3: EFFECTS STACK -->
+            <div class="rack-column">
+                <div class="rack-label-vertical">EFFECTS RACK</div>
+
+                <!-- EQ -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Equalizer</h3>
+                        <label class="switch small-switch">
+                            <input type="checkbox" id="eq-enable" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="sliders-row">
+                        <div class="slider-container">
+                            <label>Low</label>
+                            <input type="range" id="eq-low" min="-20" max="20" step="1" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>Mid</label>
+                            <input type="range" id="eq-mid" min="-20" max="20" step="1" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>High</label>
+                            <input type="range" id="eq-high" min="-20" max="20" step="1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delay -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Delay</h3>
+                        <label class="switch small-switch">
+                            <input type="checkbox" id="delay-enable" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="sliders-row">
+                        <div class="slider-container">
+                            <label>Time</label>
+                            <input type="range" id="delay-time" min="0" max="1" step="0.01" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>F.Bk</label>
+                            <input type="range" id="delay-feedback" min="0" max="0.9" step="0.01" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>Mix</label>
+                            <input type="range" id="delay-mix" min="0" max="1" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reverb -->
+                <div class="control-group module">
+                    <div class="module-header">
+                        <h3>Reverb</h3>
+                        <label class="switch small-switch">
+                            <input type="checkbox" id="reverb-enable" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="sliders-row">
+                        <div class="slider-container">
+                            <label>Size</label>
+                            <input type="range" id="verb-time" min="0.1" max="5" step="0.1" value="2">
+                        </div>
+                        <div class="slider-container">
+                            <label>Mix</label>
+                            <input type="range" id="verb-mix" min="0" max="1" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Section -->
+    <div class="keyboard-container" id="keyboard">
+        <!-- Keys by JS -->
+    </div>
+
+    <script src="js/Notes.js"></script>
+    <script src="js/VoicePresets.js"></script>
+    <script src="js/AudioEngine.js"></script>
+    <script src="js/UI.js"></script>
+    <script src="js/IO.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

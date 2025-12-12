@@ -1,0 +1,638 @@
+:root {
+    --bg-color: #121212;
+    --panel-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --primary-color: #00d4ff;
+    /* Cyan */
+    --accent-color: #ff007a;
+    /* Magenta */
+    --key-white: #ffffff;
+    --key-black: #000000;
+    --knob-bg: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    direction: ltr !important;
+    padding: 20px 0;
+}
+
+.synth-container {
+    background-color: var(--panel-bg);
+    width: 95%;
+    max-width: 1200px;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), inset 0 0 2px rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+header h1 span {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.io-controls {
+    display: flex;
+    gap: 10px;
+}
+
+button,
+.btn-primary,
+.btn-secondary,
+label.btn-secondary {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #000;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+.btn-secondary {
+    background-color: #333;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #444;
+}
+
+/* MAIN RACK - Horizontal Flow */
+.main-rack {
+    display: flex;
+    flex-direction: row;
+    /* Ensure Row */
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 15px;
+    align-items: stretch;
+}
+
+.rack-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
+    /* Prevent flex overflow */
+}
+
+.module {
+    background: #252525;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 12px;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #444;
+    /* More visible separator */
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.module-header h3 {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.led {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff007a;
+    box-shadow: 0 0 5px #ff007a;
+}
+
+.led.green {
+    background: #00ff9d;
+    box-shadow: 0 0 5px #00ff9d;
+}
+
+/* Form Elements */
+select {
+    background: #111;
+    color: var(--primary-color);
+    border: 1px solid #444;
+    padding: 4px;
+    border-radius: 4px;
+    width: 100%;
+    font-size: 0.8rem;
+    outline: none;
+}
+
+.knob-row,
+.toggle-row,
+.slider-container {
+    width: 100%;
+}
+
+label {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+/* Sliders */
+input[type=range] {
+    width: 100%;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+/* Vertical Sliders container */
+.sliders-row.compact {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 140px;
+    /* Taller for better control */
+}
+
+.slider-v-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    gap: 5px;
+    flex: 1;
+}
+
+input[type=range][orient=vertical] {
+    writing-mode: vertical-lr;
+    /* Standard property */
+    transform: rotate(180deg);
+    /* Some browsers flip vertical-lr, this might need adjustment depending on behavior, but usually necessary for 'bottom-up' feels */
+    width: 20px;
+    /* Needs explicit width/height swap in flex logic often, but for writing-mode usually simple width/height */
+    height: 100%;
+    padding: 0;
+    background: transparent;
+    appearance: auto;
+    /* Revert to auto to allow browser to render vertical slider natively if supported via writing-mode */
+    cursor: pointer;
+}
+
+/* Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: var(--primary-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(16px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1a1a1a;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+.status-text {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    width: 40px;
+    text-align: right;
+}
+
+/* Scale Tuning - Mini Piano Style */
+.scale-keyboard {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    margin: 20px auto;
+    height: 80px;
+    width: fit-content;
+}
+
+.scale-btn {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+    border: 1px solid #333;
+    font-size: 0.65rem;
+    font-weight: bold;
+}
+
+.scale-btn.white {
+    width: 28px;
+    height: 80px;
+    background: linear-gradient(to bottom, #f5f5f5, #d0d0d0);
+    color: #333;
+    z-index: 1;
+    position: relative;
+    border-radius: 0 0 3px 3px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 4px;
+}
+
+.scale-btn.black {
+    width: 18px;
+    height: 50px;
+    background: linear-gradient(to bottom, #1a1a1a, #000);
+    color: #888;
+    z-index: 2;
+    position: absolute;
+    border-radius: 0 0 2px 2px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 3px;
+}
+
+/* Position black keys over white keys */
+.scale-btn.black:nth-of-type(2) {
+    left: 20px;
+}
+
+/* C# */
+.scale-btn.black:nth-of-type(4) {
+    left: 48px;
+}
+
+/* D# */
+.scale-btn.black:nth-of-type(7) {
+    left: 104px;
+}
+
+/* F# */
+.scale-btn.black:nth-of-type(9) {
+    left: 132px;
+}
+
+/* G# */
+.scale-btn.black:nth-of-type(11) {
+    left: 160px;
+}
+
+/* A# */
+
+.scale-btn.white:hover {
+    background: linear-gradient(to bottom, #fff, #e0e0e0);
+}
+
+.scale-btn.black:hover {
+    background: linear-gradient(to bottom, #333, #111);
+}
+
+.scale-btn.active {
+    background: #ffab00 !important;
+    color: #000 !important;
+}
+
+/* Key Hints */
+.key-hint {
+    position: absolute;
+    bottom: 5px;
+    font-size: 0.6rem;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.key.black .key-hint {
+    color: #ddd;
+    bottom: 2px;
+}
+
+/* Rack Organization */
+.rack-container {
+    width: 100%;
+}
+
+.rack-label {
+    width: 100%;
+    color: #888;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 15px 0 8px 0;
+    border-left: 3px solid var(--accent-color);
+    padding-left: 10px;
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-small {
+    background: #2a2a2a;
+    color: var(--text-color);
+    border: 1px solid #444;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.btn-small:hover {
+    background: #333;
+    border-color: var(--primary-color);
+}
+
+/* Module Text */
+.module-desc {
+    font-size: 0.7rem;
+    color: #888;
+    margin: 8px 0;
+    text-align: center;
+}
+
+/* Instructions */
+.instructions {
+    width: 95%;
+    max-width: 1200px;
+    text-align: center;
+    padding: 12px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    margin: 0 auto 20px auto;
+    font-size: 0.85rem;
+    color: #888;
+    border: 1px solid #333;
+}
+
+.instructions strong {
+    color: var(--primary-color);
+}
+
+/* Main Piano Keyboard */
+.keyboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    height: 150px;
+    width: 95%;
+    max-width: 1200px;
+    background: linear-gradient(to bottom, #0a0a0a, #050505);
+    border-radius: 8px;
+    border-top: 4px solid var(--accent-color);
+    overflow: visible;
+    padding: 15px;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Wrapper for Keys to handle absolute positioning correctly */
+.keys-wrapper {
+    position: relative;
+    display: inline-flex;
+    height: 100%;
+    align-items: flex-end;
+}
+
+.key {
+    position: relative;
+    border: 1px solid #555;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.08s;
+}
+
+.key.white {
+    background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+    width: 42px;
+    height: 120px;
+    z-index: 1;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    font-size: 0.7rem;
+    color: #555;
+    font-weight: 600;
+}
+
+.key.white.active {
+    background: linear-gradient(to bottom, #d0d0d0, #b0b0b0);
+    transform: translateY(3px);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.key.black {
+    background: linear-gradient(to bottom, #2a2a2a, #000);
+    width: 26px;
+    height: 75px;
+    position: absolute;
+    z-index: 5;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 6px;
+}
+
+.key.black.active {
+    background: linear-gradient(to bottom, #444, #111);
+    transform: translateY(2px);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Black Key Positioning Classes */
+/* Position black keys EXACTLY on the border between white keys */
+/* Formula: (N * 42px) - 13px */
+/* Where N is the number of preceding white keys, 42px is white key width, 13px is half black key width */
+
+.key.black.black-pos-1 {
+    left: calc(1 * 42px - 13px);
+}
+
+/* C#3 */
+.key.black.black-pos-2 {
+    left: calc(2 * 42px - 13px);
+}
+
+/* D#3 */
+.key.black.black-pos-4 {
+    left: calc(4 * 42px - 13px);
+}
+
+/* F#3 */
+.key.black.black-pos-5 {
+    left: calc(5 * 42px - 13px);
+}
+
+/* G#3 */
+.key.black.black-pos-6 {
+    left: calc(6 * 42px - 13px);
+}
+
+/* A#3 */
+
+.key.black.black-pos-8 {
+    left: calc(8 * 42px - 13px);
+}
+
+/* C#4 */
+.key.black.black-pos-9 {
+    left: calc(9 * 42px - 13px);
+}
+
+/* D#4 */
+.key.black.black-pos-11 {
+    left: calc(11 * 42px - 13px);
+}
+
+/* F#4 */
+.key.black.black-pos-12 {
+    left: calc(12 * 42px - 13px);
+}
+
+/* G#4 */
+.key.black.black-pos-13 {
+    left: calc(13 * 42px - 13px);
+}
+
+/* A#4 */
+
+.key.black.black-pos-15 {
+    left: calc(15 * 42px - 13px);
+}
+
+/* C#5 */
+.key.black.black-pos-16 {
+    left: calc(16 * 42px - 13px);
+}
+
+/* D#5 */
+.key.black.black-pos-18 {
+    left: calc(18 * 42px - 13px);
+}
+
+/* F#5 */
+.key.black.black-pos-19 {
+    left: calc(19 * 42px - 13px);
+}
+
+/* G#5 (=) */
+.key.black.black-pos-20 {
+    left: calc(20 * 42px - 13px);
+}
+
+/* A#5 */
