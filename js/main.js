@@ -89,9 +89,24 @@ Object.values(inputs).forEach(input => {
 
 // Voice Select Listener
 if (inputs.voiceSelect) {
+    const presetSelect = document.getElementById('osc-preset-select');
+    const presetContainer = document.getElementById('osc-preset-container');
+
+    // Helper to toggle preset container visibility
+    const updatePresetVisibility = (val) => {
+        if (presetContainer) {
+            presetContainer.style.display = (val === 'custom') ? 'block' : 'none';
+        }
+    };
+
+    // Initial check
+    updatePresetVisibility(inputs.voiceSelect.value);
+
     inputs.voiceSelect.addEventListener('change', (e) => {
         const presetKey = e.target.value;
         const preset = VOICE_PRESETS[presetKey];
+
+        updatePresetVisibility(presetKey);
 
         if (preset) {
             // New: Pass voice type and key to engine
@@ -127,6 +142,81 @@ if (inputs.voiceSelect) {
             updateEngineSettings();
         }
     });
+
+    // Oscillator Preset Listener
+    if (presetSelect) {
+        // Refill Dropdown Dynamically
+        const populateOscPresets = () => {
+            presetSelect.innerHTML = '<option value="" disabled selected>Select Preset</option>';
+            Object.keys(OSC_PRESETS).forEach(key => {
+                const p = OSC_PRESETS[key];
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = p.name || key;
+                presetSelect.appendChild(opt);
+            });
+        };
+        populateOscPresets();
+
+        presetSelect.addEventListener('change', (e) => {
+            const key = e.target.value;
+            const presetData = OSC_PRESETS[key];
+
+            if (presetData && presetData.settings) {
+                const s = presetData.settings;
+
+                // Apply Params
+                if (s.waveform) inputs.waveform.value = s.waveform;
+                if (s.poly !== undefined) {
+                    inputs.polyMode.checked = s.poly;
+                    inputs.polyMode.dispatchEvent(new Event('change'));
+                }
+                if (s.priority) inputs.priority.value = s.priority;
+
+                if (s.attack !== undefined) inputs.attack.value = s.attack;
+                if (s.decay !== undefined) inputs.decay.value = s.decay;
+                if (s.sustain !== undefined) inputs.sustain.value = s.sustain;
+                if (s.release !== undefined) inputs.release.value = s.release;
+                if (s.cutoff !== undefined) inputs.cutoff.value = s.cutoff;
+                if (s.resonance !== undefined) inputs.resonance.value = s.resonance;
+                if (s.volume !== undefined) inputs.volume.value = s.volume;
+
+                // Effects
+                if (s.eqEnabled !== undefined) inputs.eqEnabled.checked = s.eqEnabled;
+                if (s.eqLow !== undefined) inputs.eqLow.value = s.eqLow;
+                if (s.eqMid !== undefined) inputs.eqMid.value = s.eqMid;
+                if (s.eqHigh !== undefined) inputs.eqHigh.value = s.eqHigh;
+
+                if (s.delayEnabled !== undefined) inputs.delayEnabled.checked = s.delayEnabled;
+                if (s.delayTime !== undefined) inputs.delayTime.value = s.delayTime;
+                if (s.delayFeedback !== undefined) inputs.delayFeedback.value = s.delayFeedback;
+                if (s.delayMix !== undefined) inputs.delayMix.value = s.delayMix;
+
+                if (s.reverbEnabled !== undefined) inputs.reverbEnabled.checked = s.reverbEnabled;
+                if (s.verbTime !== undefined) inputs.verbTime.value = s.verbTime;
+                if (s.verbMix !== undefined) inputs.verbMix.value = s.verbMix;
+
+                // Update Visuals
+                Object.values(inputs).forEach(inp => {
+                    if (inp && inp.tagName === 'INPUT') updateValueDisplay(inp);
+                });
+
+                updateEngineSettings();
+            }
+
+            // Apply Scale
+            if (presetData && presetData.scale) {
+                engine.resetScale();
+                const scale = presetData.scale;
+                Object.keys(scale).forEach(note => {
+                    if (scale[note] === -50) {
+                        engine.toggleScaleNote(note);
+                    }
+                });
+                renderScaleGrid(engine);
+            }
+        });
+    }
 }
 
 // Reverb Time (Regen)

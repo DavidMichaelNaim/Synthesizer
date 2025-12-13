@@ -14,3 +14,71 @@ const VOICE_PRESETS = {
         resonance: 1
     }
 };
+
+const OSC_PRESETS = {
+    laget: {
+        name: "Laget",
+        settings: {
+            waveform: "sawtooth",
+            poly: false,
+            priority: "last",
+            attack: 0.05,
+            decay: 0,
+            sustain: 1,
+            release: 0.1,
+            cutoff: 8000,
+            resonance: 4,
+            volume: 0.06,
+            // Effects
+            eqEnabled: true,
+            eqLow: 15,
+            eqMid: 20,
+            eqHigh: 8,
+            delayEnabled: true,
+            delayTime: 0.31,
+            delayFeedback: 0.05,
+            delayMix: 0.19,
+            reverbEnabled: true,
+            verbTime: 2,
+            verbMix: 0.31
+        },
+        scale: {
+            "E": -50,
+            "F#": -50,
+            "G#": -50,
+            "B": -50
+        }
+    },
+    shepsy: {
+        name: "shepsy",
+        settings: {
+            "waveform": "square",
+            "priority": "last",
+            "attack": 0.05,
+            "decay": 0,
+            "sustain": 1,
+            "release": 0.1,
+            "cutoff": 7500,
+            "resonance": 0,
+            "volume": 0.1,
+            "poly": false,
+            "eqEnabled": true,
+            "delayEnabled": true,
+            "reverbEnabled": true,
+            "eqLow": 20,
+            "eqMid": 20,
+            "eqHigh": 5,
+            "delayTime": 0.31,
+            "delayFeedback": 0.05,
+            "delayMix": 0.19,
+            "verbTime": 2,
+            "verbMix": 0.31
+        },
+        scale: {
+            "E": -50,
+            "F#": -50,
+            "G#": -50,
+            "B": -50
+        }
+    }
+};
