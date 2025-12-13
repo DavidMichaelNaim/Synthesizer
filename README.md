@@ -38,7 +38,7 @@ Simply visit the GitHub Pages deployment (link coming soon!).
 ### Local Installation
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/YOUR_USERNAME/Web-Synth-Pro.git
+    git clone https://github.com/DavidMichaelNaim/Web-Synth-Pro.git
     cd Web-Synth-Pro
     ```
 
