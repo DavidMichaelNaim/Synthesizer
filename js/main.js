@@ -60,19 +60,20 @@ function updateEngineSettings() {
         resonance: parseFloat(inputs.resonance.value),
         volume: parseFloat(inputs.volume.value),
         // Effects
-        distEnabled: inputs.distEnabled.checked,
-        distDrive: parseFloat(inputs.distDrive.value),
-        distMix: parseFloat(inputs.distMix.value),
+        // Effects
+        distEnabled: inputs.distEnabled ? inputs.distEnabled.checked : false,
+        distDrive: inputs.distDrive ? parseFloat(inputs.distDrive.value) : 0,
+        distMix: inputs.distMix ? parseFloat(inputs.distMix.value) : 0,
 
         eqEnabled: inputs.eqEnabled.checked,
         eqLow: parseFloat(inputs.eqLow.value),
         eqMid: parseFloat(inputs.eqMid.value),
         eqHigh: parseFloat(inputs.eqHigh.value),
 
-        chorusEnabled: inputs.chorusEnabled.checked,
-        chorusRate: parseFloat(inputs.chorusRate.value),
-        chorusDepth: parseFloat(inputs.chorusDepth.value),
-        chorusMix: parseFloat(inputs.chorusMix.value),
+        chorusEnabled: inputs.chorusEnabled ? inputs.chorusEnabled.checked : false,
+        chorusRate: inputs.chorusRate ? parseFloat(inputs.chorusRate.value) : 1,
+        chorusDepth: inputs.chorusDepth ? parseFloat(inputs.chorusDepth.value) : 0,
+        chorusMix: inputs.chorusMix ? parseFloat(inputs.chorusMix.value) : 0,
 
         delayEnabled: inputs.delayEnabled.checked,
         delayTime: parseFloat(inputs.delayTime.value),
