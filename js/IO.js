@@ -13,7 +13,43 @@ function loadPreset(data, engine, inputs) {
         const settings = data.settings || data;
         const scale = data.scale || {};
 
-        engine.applySettings(settings);
+        // Add default values for new effects if missing (backward compatibility)
+        const completeSettings = {
+            // Existing defaults
+            waveform: 'sawtooth',
+            priority: 'last',
+            attack: 0.1,
+            decay: 0.3,
+            sustain: 0.5,
+            release: 1.0,
+            cutoff: 2000,
+            resonance: 1,
+            volume: 0.5,
+            poly: true,
+            eqEnabled: true,
+            delayEnabled: true,
+            reverbEnabled: true,
+            eqLow: 0,
+            eqMid: 0,
+            eqHigh: 0,
+            delayTime: 0,
+            delayFeedback: 0,
+            delayMix: 0,
+            verbTime: 2,
+            verbMix: 0,
+            // New effects defaults (for backward compatibility)
+            distEnabled: false,
+            distDrive: 0,
+            distMix: 0,
+            chorusEnabled: false,
+            chorusRate: 0.5,
+            chorusDepth: 0,
+            chorusMix: 0,
+            // Override with loaded settings
+            ...settings
+        };
+
+        engine.applySettings(completeSettings);
         engine.scaleDetune = scale;
 
         // Apply to UI
@@ -22,12 +58,12 @@ function loadPreset(data, engine, inputs) {
             let settingKey = k;
             if (k === 'polyMode') settingKey = 'poly';
 
-            if (inputs[k] && settings[settingKey] !== undefined) {
-                inputs[k].value = settings[settingKey];
+            if (inputs[k] && completeSettings[settingKey] !== undefined) {
+                inputs[k].value = completeSettings[settingKey];
 
                 // Checkboxes
                 if (inputs[k].type === 'checkbox') {
-                    inputs[k].checked = settings[settingKey];
+                    inputs[k].checked = completeSettings[settingKey];
                 }
 
                 // Refresh visual values if function exists (Global scope from UI.js)
@@ -47,12 +83,20 @@ function loadPreset(data, engine, inputs) {
 
 function initIO(engine, inputs) {
     const saveBtn = document.getElementById('save-btn');
+    const deleteBtn = document.getElementById('delete-btn');
     const exportBtn = document.getElementById('export-btn');
     const importInput = document.getElementById('import-file');
 
     if (saveBtn) saveBtn.addEventListener('click', () => {
         localStorage.setItem('synth-preset', JSON.stringify(getCurrentState(engine)));
-        alert('Saved to Browser');
+        alert('✅ Preset saved to browser!');
+    });
+
+    if (deleteBtn) deleteBtn.addEventListener('click', () => {
+        if (confirm('⚠️ Delete saved preset from browser?\nThis cannot be undone.')) {
+            localStorage.removeItem('synth-preset');
+            alert('🗑️ Preset deleted!');
+        }
     });
 
     if (exportBtn) exportBtn.addEventListener('click', () => {

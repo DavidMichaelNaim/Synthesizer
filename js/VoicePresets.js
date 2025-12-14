@@ -60,7 +60,7 @@ const OSC_PRESETS = {
             "release": 0.1,
             "cutoff": 7500,
             "resonance": 0,
-            "volume": 0.1,
+            "volume": 0.05,
             "poly": false,
             "eqEnabled": true,
             "delayEnabled": true,
@@ -72,7 +72,14 @@ const OSC_PRESETS = {
             "delayFeedback": 0.05,
             "delayMix": 0.19,
             "verbTime": 2,
-            "verbMix": 0.31
+            "verbMix": 0.31,
+            "distEnabled": false,
+            "distDrive": 1,
+            "distMix": 1,
+            "chorusEnabled": true,
+            "chorusRate": 4.6,
+            "chorusDepth": 0.04,
+            "chorusMix": 1
         },
         scale: {
             "E": -50,

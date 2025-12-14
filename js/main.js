@@ -23,10 +23,19 @@ const inputs = {
     polyMode: document.getElementById('poly-mode'),
     priority: document.getElementById('mono-priority'),
     // Effects
+    distEnabled: document.getElementById('dist-enable'),
+    distDrive: document.getElementById('dist-drive'),
+    distMix: document.getElementById('dist-mix'),
+
     eqEnabled: document.getElementById('eq-enable'),
     eqLow: document.getElementById('eq-low'),
     eqMid: document.getElementById('eq-mid'),
     eqHigh: document.getElementById('eq-high'),
+
+    chorusEnabled: document.getElementById('chorus-enable'),
+    chorusRate: document.getElementById('chorus-rate'),
+    chorusDepth: document.getElementById('chorus-depth'),
+    chorusMix: document.getElementById('chorus-mix'),
 
     delayEnabled: document.getElementById('delay-enable'),
     delayTime: document.getElementById('delay-time'),
@@ -51,10 +60,19 @@ function updateEngineSettings() {
         resonance: parseFloat(inputs.resonance.value),
         volume: parseFloat(inputs.volume.value),
         // Effects
+        distEnabled: inputs.distEnabled.checked,
+        distDrive: parseFloat(inputs.distDrive.value),
+        distMix: parseFloat(inputs.distMix.value),
+
         eqEnabled: inputs.eqEnabled.checked,
         eqLow: parseFloat(inputs.eqLow.value),
         eqMid: parseFloat(inputs.eqMid.value),
         eqHigh: parseFloat(inputs.eqHigh.value),
+
+        chorusEnabled: inputs.chorusEnabled.checked,
+        chorusRate: parseFloat(inputs.chorusRate.value),
+        chorusDepth: parseFloat(inputs.chorusDepth.value),
+        chorusMix: parseFloat(inputs.chorusMix.value),
 
         delayEnabled: inputs.delayEnabled.checked,
         delayTime: parseFloat(inputs.delayTime.value),
@@ -134,6 +152,56 @@ if (inputs.voiceSelect) {
                 inputs.priority.value = preset.priority;
             }
 
+            // Apply Effects Settings from preset
+            if (preset.settings) {
+                const s = preset.settings;
+
+                // Distortion
+                if (s.distEnabled !== undefined) inputs.distEnabled.checked = s.distEnabled;
+                if (s.distDrive !== undefined) inputs.distDrive.value = s.distDrive;
+                if (s.distMix !== undefined) inputs.distMix.value = s.distMix;
+
+                // EQ
+                if (s.eqEnabled !== undefined) inputs.eqEnabled.checked = s.eqEnabled;
+                if (s.eqLow !== undefined) inputs.eqLow.value = s.eqLow;
+                if (s.eqMid !== undefined) inputs.eqMid.value = s.eqMid;
+                if (s.eqHigh !== undefined) inputs.eqHigh.value = s.eqHigh;
+
+                // Chorus
+                if (s.chorusEnabled !== undefined) inputs.chorusEnabled.checked = s.chorusEnabled;
+                if (s.chorusRate !== undefined) inputs.chorusRate.value = s.chorusRate;
+                if (s.chorusDepth !== undefined) inputs.chorusDepth.value = s.chorusDepth;
+                if (s.chorusMix !== undefined) inputs.chorusMix.value = s.chorusMix;
+
+                // Delay
+                if (s.delayEnabled !== undefined) inputs.delayEnabled.checked = s.delayEnabled;
+                if (s.delayTime !== undefined) inputs.delayTime.value = s.delayTime;
+                if (s.delayFeedback !== undefined) inputs.delayFeedback.value = s.delayFeedback;
+                if (s.delayMix !== undefined) inputs.delayMix.value = s.delayMix;
+
+                // Reverb
+                if (s.reverbEnabled !== undefined) inputs.reverbEnabled.checked = s.reverbEnabled;
+                if (s.verbTime !== undefined) inputs.verbTime.value = s.verbTime;
+                if (s.verbMix !== undefined) inputs.verbMix.value = s.verbMix;
+
+                // Update all effect displays
+                [
+                    inputs.distDrive, inputs.distMix,
+                    inputs.eqLow, inputs.eqMid, inputs.eqHigh,
+                    inputs.chorusRate, inputs.chorusDepth, inputs.chorusMix,
+                    inputs.delayTime, inputs.delayFeedback, inputs.delayMix,
+                    inputs.verbTime, inputs.verbMix
+                ].forEach(inp => {
+                    if (inp) updateValueDisplay(inp);
+                });
+            }
+
+            // Apply scale if present
+            if (preset.scale) {
+                engine.scaleDetune = preset.scale;
+                if (typeof renderScaleGrid === 'function') renderScaleGrid(engine);
+            }
+
             // Update displays for all affected inputs
             [inputs.attack, inputs.decay, inputs.sustain, inputs.release, inputs.cutoff, inputs.resonance].forEach(inp => {
                 updateValueDisplay(inp);
@@ -182,6 +250,17 @@ if (inputs.voiceSelect) {
                 if (s.volume !== undefined) inputs.volume.value = s.volume;
 
                 // Effects
+                // Distortion
+                if (s.distEnabled !== undefined) inputs.distEnabled.checked = s.distEnabled;
+                if (s.distDrive !== undefined) inputs.distDrive.value = s.distDrive;
+                if (s.distMix !== undefined) inputs.distMix.value = s.distMix;
+
+                // Chorus
+                if (s.chorusEnabled !== undefined) inputs.chorusEnabled.checked = s.chorusEnabled;
+                if (s.chorusRate !== undefined) inputs.chorusRate.value = s.chorusRate;
+                if (s.chorusDepth !== undefined) inputs.chorusDepth.value = s.chorusDepth;
+                if (s.chorusMix !== undefined) inputs.chorusMix.value = s.chorusMix;
+
                 if (s.eqEnabled !== undefined) inputs.eqEnabled.checked = s.eqEnabled;
                 if (s.eqLow !== undefined) inputs.eqLow.value = s.eqLow;
                 if (s.eqMid !== undefined) inputs.eqMid.value = s.eqMid;

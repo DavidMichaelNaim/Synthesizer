@@ -21,7 +21,10 @@ class AudioEngine {
             reverbEnabled: true,
             eqLow: 0, eqMid: 0, eqHigh: 0,
             delayTime: 0, delayFeedback: 0, delayMix: 0,
-            verbTime: 2, verbMix: 0
+            verbTime: 2, verbMix: 0,
+            // New Effects
+            distEnabled: false, distDrive: 0, distMix: 0,
+            chorusEnabled: false, chorusRate: 0.5, chorusDepth: 0, chorusMix: 0
         };
 
         // Note: Oriental scale detuning map (NoteName -> detuneCents)
@@ -41,6 +44,23 @@ class AudioEngine {
     initEffects() {
         const now = this.ctx.currentTime;
 
+        // 0. Distortion (WaveShaper)
+        this.distInput = this.ctx.createGain();
+        this.distNode = this.ctx.createWaveShaper();
+        this.distCurve = new Float32Array(44100);
+        this.distNode.curve = this.distCurve;
+        this.distNode.oversample = '4x';
+        this.distWet = this.ctx.createGain();
+        this.distDry = this.ctx.createGain();
+
+        this.distInput.connect(this.distDry);
+        this.distInput.connect(this.distNode);
+        this.distNode.connect(this.distWet);
+
+        this.distOutput = this.ctx.createGain();
+        this.distDry.connect(this.distOutput);
+        this.distWet.connect(this.distOutput);
+
         // 1. EQ (LowShelf -> Peaking -> HighShelf)
         this.eqLow = this.ctx.createBiquadFilter();
         this.eqLow.type = 'lowshelf';
@@ -55,9 +75,40 @@ class AudioEngine {
         this.eqHigh.type = 'highshelf';
         this.eqHigh.frequency.value = 3200;
 
-        // Chain EQ
+        // Connect Distortion to EQ
+        this.distOutput.connect(this.eqLow);
         this.eqLow.connect(this.eqMid);
         this.eqMid.connect(this.eqHigh);
+
+        // 1.5 Chorus (Delay + LFO)
+        this.chorusInput = this.ctx.createGain();
+        this.chorusWet = this.ctx.createGain();
+        this.chorusDry = this.ctx.createGain();
+
+        // LFO for Chorus
+        this.chorusLFO = this.ctx.createOscillator();
+        this.chorusLFO.type = 'sine';
+        this.chorusLFO.frequency.value = 1.5;
+        this.chorusLFO.start(now);
+
+        // LFO Depth
+        this.chorusDepthNode = this.ctx.createGain();
+        this.chorusDepthNode.gain.value = 0.002;
+        this.chorusLFO.connect(this.chorusDepthNode);
+
+        // Modulated Delay
+        this.chorusDelay = this.ctx.createDelay(0.1);
+        this.chorusDelay.delayTime.value = 0.01;
+        this.chorusDepthNode.connect(this.chorusDelay.delayTime);
+
+        // Routing
+        this.chorusInput.connect(this.chorusDry);
+        this.chorusInput.connect(this.chorusDelay);
+        this.chorusDelay.connect(this.chorusWet);
+
+        this.chorusOutput = this.ctx.createGain();
+        this.chorusDry.connect(this.chorusOutput);
+        this.chorusWet.connect(this.chorusOutput);
 
         // 2. Delay (Feedback Loop)
         this.delayNode = this.ctx.createDelay(5.0);
@@ -80,8 +131,11 @@ class AudioEngine {
         this.delayInput = this.ctx.createGain();
         this.reverbInput = this.ctx.createGain();
 
-        // Connect EQ to Delay Input
-        this.eqHigh.connect(this.delayInput);
+        // Connect EQ to Chorus
+        this.eqHigh.connect(this.chorusInput);
+
+        // Connect Chorus to Delay Input
+        this.chorusOutput.connect(this.delayInput);
 
         // Delay internals
         this.delayInput.connect(this.delayDry); // Dry path
@@ -119,6 +173,18 @@ class AudioEngine {
         this.reverbNode.buffer = impulse;
     }
 
+    makeDistortionCurve(amount) {
+        const k = typeof amount === 'number' ? amount : 50;
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        const deg = Math.PI / 180;
+        for (let i = 0; i < n_samples; ++i) {
+            const x = i * 2 / n_samples - 1;
+            curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+        }
+        return curve;
+    }
+
     applySettings(settings) {
         if (settings) {
             this.currentSettings = { ...this.currentSettings, ...settings };
@@ -127,6 +193,17 @@ class AudioEngine {
         const s = this.currentSettings;
 
         this.masterGain.gain.setValueAtTime(s.volume, now);
+
+        // Apply Distortion
+        if (s.distEnabled) {
+            const drive = Math.max(0, s.distDrive);
+            this.distNode.curve = this.makeDistortionCurve(drive * 100);
+            this.distDry.gain.setTargetAtTime(1 - s.distMix, now, 0.01);
+            this.distWet.gain.setTargetAtTime(s.distMix, now, 0.01);
+        } else {
+            this.distWet.gain.setTargetAtTime(0, now, 0.01);
+            this.distDry.gain.setTargetAtTime(1, now, 0.01);
+        }
 
         // Apply EQ (Bypass by setting gains to 0)
         if (s.eqEnabled) {
@@ -137,6 +214,17 @@ class AudioEngine {
             this.eqLow.gain.setValueAtTime(0, now);
             this.eqMid.gain.setValueAtTime(0, now);
             this.eqHigh.gain.setValueAtTime(0, now);
+        }
+
+        // Apply Chorus
+        if (s.chorusEnabled) {
+            this.chorusLFO.frequency.setTargetAtTime(s.chorusRate, now, 0.01);
+            this.chorusDepthNode.gain.setTargetAtTime(s.chorusDepth * 0.005, now, 0.01);
+            this.chorusDry.gain.setTargetAtTime(1 - s.chorusMix, now, 0.01);
+            this.chorusWet.gain.setTargetAtTime(s.chorusMix, now, 0.01);
+        } else {
+            this.chorusWet.gain.setTargetAtTime(0, now, 0.01);
+            this.chorusDry.gain.setTargetAtTime(1, now, 0.01);
         }
 
         // Apply Delay
@@ -218,7 +306,7 @@ class AudioEngine {
 
         // Wiring: Source -> Filter -> Env -> Effects
         filter.connect(envGain);
-        envGain.connect(this.eqLow);
+        envGain.connect(this.distInput);
 
         let sourceNode;
 
