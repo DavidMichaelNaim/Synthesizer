@@ -376,6 +376,8 @@ input:checked+.slider:before {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 600px;
+    height: 600px;
+    /* Explicit height to ensure scrollbar appears */
     padding-right: 5px;
 }
 
