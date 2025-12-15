@@ -18,10 +18,20 @@ Web Synth Pro provides a rich, tactile sound synthesis experience directly in yo
 - **ADSR Envelope**: Precise control over Attack, Decay, Sustain, and Release for shaping sound dynamics.
 - **Filter Section**: Resonant Low-Pass Filter with Cutoff and Resonance controls.
 
-### 🎚️ Effects Rack
+### 🎚️ Effects Rack (Scrollable)
+A comprehensive effects chain with 10 studio-quality processors:
+
+- **Auto-Wah**: Dynamic filter sweep with adjustable Rate, Depth, and Q (Resonance).
+- **Distortion**: Waveshaping distortion with Drive and Dry/Wet Mix controls.
+- **Tremolo**: Amplitude modulation with Rate and Depth controls.
 - **Equalizer**: 3-band EQ (Low, Mid, High) to sculpt your tone.
+- **Phaser**: Classic phasing effect with Rate, Depth, and Feedback controls.
+- **Chorus**: Rich modulation with Rate, Depth, and Mix controls.
 - **Delay**: Stereo delay with Time, Feedback, and Dry/Wet Mix controls.
 - **Reverb**: Ambience/Room simulator with Size and Mix controls.
+- **Compressor**: Professional dynamics control with Threshold, Ratio, Attack, and Release.
+
+All effects are individually toggleable and feature vertical sliders for precise parameter control.
 
 ### 🎹 Advanced Tuning & Presets
 - **Microtonal Scale Tuning**: Click on note names in the tuning grid (E, F#, G#, etc.) to detune them by -50 cents for Quarter-Tone scales (Maqam).
@@ -48,10 +58,29 @@ Simply visit the GitHub Pages deployment (link coming soon!).
 
 ---
 
+## 🆕 Recent Updates
+
+### Version 2.1 (December 2025)
+- ✨ **Auto-Wah Effect**: Fixed signal chain routing and optimized default parameters for noticeable effect.
+- 🎨 **Scrollable Effects Rack**: Enhanced UI with scrollable effects container for better navigation.
+- 🎛️ **Expanded Effects**: Added Tremolo, Phaser, and Compressor to the effects chain.
+- 🎚️ **Improved Presets**: Updated "Laget" and "Shepsy" presets with full effects configuration.
+- 🐛 **Bug Fixes**: Corrected audio signal routing ensuring all effects process in proper order.
+
+---
+
 ## 🛠️ Tech Stack
 - **Core**: Vanilla JavaScript (ES6+), HTML5, CSS3.
-- **Audio**: Web Audio API (OscillatorNode, BiquadFilterNode, GainNode, ConvolverNode, DelayNode).
+- **Audio**: Web Audio API with comprehensive node usage:
+  - OscillatorNode (Synthesis)
+  - BiquadFilterNode (Filtering, EQ, Auto-Wah, Phaser)
+  - GainNode (Envelope, Mixing, Tremolo)
+  - WaveShaperNode (Distortion)
+  - DelayNode (Delay, Chorus)
+  - ConvolverNode (Reverb)
+  - DynamicsCompressorNode (Master Compression)
 - **UI Framework**: Bootstrap 5 (Dark Mode).
+- **Design**: Custom CSS with vertical sliders, smooth animations, and responsive grid layout.
 
 ---
 

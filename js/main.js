@@ -23,14 +23,28 @@ const inputs = {
     polyMode: document.getElementById('poly-mode'),
     priority: document.getElementById('mono-priority'),
     // Effects
+    wahEnabled: document.getElementById('wah-enable'),
+    wahRate: document.getElementById('wah-rate'),
+    wahDepth: document.getElementById('wah-depth'),
+    wahQ: document.getElementById('wah-q'),
+
     distEnabled: document.getElementById('dist-enable'),
     distDrive: document.getElementById('dist-drive'),
     distMix: document.getElementById('dist-mix'),
+
+    tremEnabled: document.getElementById('trem-enable'),
+    tremRate: document.getElementById('trem-rate'),
+    tremDepth: document.getElementById('trem-depth'),
 
     eqEnabled: document.getElementById('eq-enable'),
     eqLow: document.getElementById('eq-low'),
     eqMid: document.getElementById('eq-mid'),
     eqHigh: document.getElementById('eq-high'),
+
+    phaserEnabled: document.getElementById('phaser-enable'),
+    phaserRate: document.getElementById('phaser-rate'),
+    phaserDepth: document.getElementById('phaser-depth'),
+    phaserFeedback: document.getElementById('phaser-feedback'),
 
     chorusEnabled: document.getElementById('chorus-enable'),
     chorusRate: document.getElementById('chorus-rate'),
@@ -44,7 +58,12 @@ const inputs = {
 
     reverbEnabled: document.getElementById('reverb-enable'),
     verbTime: document.getElementById('verb-time'),
-    verbMix: document.getElementById('verb-mix')
+    verbMix: document.getElementById('verb-mix'),
+
+    compThreshold: document.getElementById('comp-threshold'),
+    compRatio: document.getElementById('comp-ratio'),
+    compAttack: document.getElementById('comp-attack'),
+    compRelease: document.getElementById('comp-release')
 };
 
 function updateEngineSettings() {
@@ -59,30 +78,48 @@ function updateEngineSettings() {
         cutoff: parseFloat(inputs.cutoff.value),
         resonance: parseFloat(inputs.resonance.value),
         volume: parseFloat(inputs.volume.value),
-        // Effects
-        // Effects
+        // Effects - Defensive Checks for ALL
+        wahEnabled: inputs.wahEnabled ? inputs.wahEnabled.checked : false,
+        wahRate: inputs.wahRate ? parseFloat(inputs.wahRate.value) : 0,
+        wahDepth: inputs.wahDepth ? parseFloat(inputs.wahDepth.value) : 0,
+        wahQ: inputs.wahQ ? parseFloat(inputs.wahQ.value) : 1,
+
         distEnabled: inputs.distEnabled ? inputs.distEnabled.checked : false,
         distDrive: inputs.distDrive ? parseFloat(inputs.distDrive.value) : 0,
         distMix: inputs.distMix ? parseFloat(inputs.distMix.value) : 0,
 
-        eqEnabled: inputs.eqEnabled.checked,
-        eqLow: parseFloat(inputs.eqLow.value),
-        eqMid: parseFloat(inputs.eqMid.value),
-        eqHigh: parseFloat(inputs.eqHigh.value),
+        tremEnabled: inputs.tremEnabled ? inputs.tremEnabled.checked : false,
+        tremRate: inputs.tremRate ? parseFloat(inputs.tremRate.value) : 0,
+        tremDepth: inputs.tremDepth ? parseFloat(inputs.tremDepth.value) : 0,
+
+        eqEnabled: inputs.eqEnabled ? inputs.eqEnabled.checked : false,
+        eqLow: inputs.eqLow ? parseFloat(inputs.eqLow.value) : 0,
+        eqMid: inputs.eqMid ? parseFloat(inputs.eqMid.value) : 0,
+        eqHigh: inputs.eqHigh ? parseFloat(inputs.eqHigh.value) : 0,
+
+        phaserEnabled: inputs.phaserEnabled ? inputs.phaserEnabled.checked : false,
+        phaserRate: inputs.phaserRate ? parseFloat(inputs.phaserRate.value) : 0,
+        phaserDepth: inputs.phaserDepth ? parseFloat(inputs.phaserDepth.value) : 0,
+        phaserFeedback: inputs.phaserFeedback ? parseFloat(inputs.phaserFeedback.value) : 0,
 
         chorusEnabled: inputs.chorusEnabled ? inputs.chorusEnabled.checked : false,
-        chorusRate: inputs.chorusRate ? parseFloat(inputs.chorusRate.value) : 1,
+        chorusRate: inputs.chorusRate ? parseFloat(inputs.chorusRate.value) : 0,
         chorusDepth: inputs.chorusDepth ? parseFloat(inputs.chorusDepth.value) : 0,
         chorusMix: inputs.chorusMix ? parseFloat(inputs.chorusMix.value) : 0,
 
-        delayEnabled: inputs.delayEnabled.checked,
-        delayTime: parseFloat(inputs.delayTime.value),
-        delayFeedback: parseFloat(inputs.delayFeedback.value),
-        delayMix: parseFloat(inputs.delayMix.value),
+        delayEnabled: inputs.delayEnabled ? inputs.delayEnabled.checked : false,
+        delayTime: inputs.delayTime ? parseFloat(inputs.delayTime.value) : 0,
+        delayFeedback: inputs.delayFeedback ? parseFloat(inputs.delayFeedback.value) : 0,
+        delayMix: inputs.delayMix ? parseFloat(inputs.delayMix.value) : 0,
 
-        reverbEnabled: inputs.reverbEnabled.checked,
-        verbTime: parseFloat(inputs.verbTime.value),
-        verbMix: parseFloat(inputs.verbMix.value)
+        reverbEnabled: inputs.reverbEnabled ? inputs.reverbEnabled.checked : false,
+        verbTime: inputs.verbTime ? parseFloat(inputs.verbTime.value) : 0,
+        verbMix: inputs.verbMix ? parseFloat(inputs.verbMix.value) : 0,
+
+        compThreshold: inputs.compThreshold ? parseFloat(inputs.compThreshold.value) : -24,
+        compRatio: inputs.compRatio ? parseFloat(inputs.compRatio.value) : 12,
+        compAttack: inputs.compAttack ? parseFloat(inputs.compAttack.value) : 0.003,
+        compRelease: inputs.compRelease ? parseFloat(inputs.compRelease.value) : 0.25
     };
     engine.applySettings();
 }
@@ -251,10 +288,33 @@ if (inputs.voiceSelect) {
                 if (s.volume !== undefined) inputs.volume.value = s.volume;
 
                 // Effects
+                // Auto-Wah
+                if (s.wahEnabled !== undefined) inputs.wahEnabled.checked = s.wahEnabled;
+                if (s.wahRate !== undefined) inputs.wahRate.value = s.wahRate;
+                if (s.wahDepth !== undefined) inputs.wahDepth.value = s.wahDepth;
+                if (s.wahQ !== undefined) inputs.wahQ.value = s.wahQ;
+
                 // Distortion
                 if (s.distEnabled !== undefined) inputs.distEnabled.checked = s.distEnabled;
                 if (s.distDrive !== undefined) inputs.distDrive.value = s.distDrive;
                 if (s.distMix !== undefined) inputs.distMix.value = s.distMix;
+
+                // Tremolo
+                if (s.tremEnabled !== undefined) inputs.tremEnabled.checked = s.tremEnabled;
+                if (s.tremRate !== undefined) inputs.tremRate.value = s.tremRate;
+                if (s.tremDepth !== undefined) inputs.tremDepth.value = s.tremDepth;
+
+                // EQ
+                if (s.eqEnabled !== undefined) inputs.eqEnabled.checked = s.eqEnabled;
+                if (s.eqLow !== undefined) inputs.eqLow.value = s.eqLow;
+                if (s.eqMid !== undefined) inputs.eqMid.value = s.eqMid;
+                if (s.eqHigh !== undefined) inputs.eqHigh.value = s.eqHigh;
+
+                // Phaser
+                if (s.phaserEnabled !== undefined) inputs.phaserEnabled.checked = s.phaserEnabled;
+                if (s.phaserRate !== undefined) inputs.phaserRate.value = s.phaserRate;
+                if (s.phaserDepth !== undefined) inputs.phaserDepth.value = s.phaserDepth;
+                if (s.phaserFeedback !== undefined) inputs.phaserFeedback.value = s.phaserFeedback;
 
                 // Chorus
                 if (s.chorusEnabled !== undefined) inputs.chorusEnabled.checked = s.chorusEnabled;

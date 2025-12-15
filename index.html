@@ -226,6 +226,37 @@
                         </div>
 
                         <div class="effects-track-container">
+                            <!-- Auto-Wah Module -->
+                            <div class="effect-module">
+                                <div class="effect-header">
+                                    <span class="effect-title">Auto-Wah</span>
+                                    <label class="switch small-switch">
+                                        <input type="checkbox" id="wah-enable">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="effect-controls">
+                                    <div class="v-slider-group">
+                                        <input type="range" id="wah-rate" class="v-slider" orient="vertical" min="0.1"
+                                            max="10" step="0.1" value="2">
+                                        <span class="v-label">Rate</span>
+                                        <span class="v-val" id="wah-rate-val">2</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="wah-depth" class="v-slider" orient="vertical" min="0"
+                                            max="1" step="0.01" value="0.5">
+                                        <span class="v-label">Depth</span>
+                                        <span class="v-val" id="wah-depth-val">0.5</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="wah-q" class="v-slider" orient="vertical" min="1"
+                                            max="20" step="0.1" value="5">
+                                        <span class="v-label">Q</span>
+                                        <span class="v-val" id="wah-q-val">5</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Distortion Module -->
                             <div class="effect-module">
                                 <div class="effect-header">
@@ -247,6 +278,31 @@
                                             max="1" step="0.01" value="0">
                                         <span class="v-label">Mix</span>
                                         <span class="v-val" id="dist-mix-val">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tremolo Module -->
+                            <div class="effect-module">
+                                <div class="effect-header">
+                                    <span class="effect-title">Tremolo</span>
+                                    <label class="switch small-switch">
+                                        <input type="checkbox" id="trem-enable">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="effect-controls">
+                                    <div class="v-slider-group">
+                                        <input type="range" id="trem-rate" class="v-slider" orient="vertical" min="0.1"
+                                            max="20" step="0.1" value="5">
+                                        <span class="v-label">Rate</span>
+                                        <span class="v-val" id="trem-rate-val">5</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="trem-depth" class="v-slider" orient="vertical" min="0"
+                                            max="1" step="0.01" value="0">
+                                        <span class="v-label">Depth</span>
+                                        <span class="v-val" id="trem-depth-val">0</span>
                                     </div>
                                 </div>
                             </div>
@@ -278,6 +334,37 @@
                                             max="20" step="1" value="0">
                                         <span class="v-label">High</span>
                                         <span class="v-val" id="eq-high-val">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phaser Module -->
+                            <div class="effect-module">
+                                <div class="effect-header">
+                                    <span class="effect-title">Phaser</span>
+                                    <label class="switch small-switch">
+                                        <input type="checkbox" id="phaser-enable">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="effect-controls">
+                                    <div class="v-slider-group">
+                                        <input type="range" id="phaser-rate" class="v-slider" orient="vertical"
+                                            min="0.1" max="10" step="0.1" value="1">
+                                        <span class="v-label">Rate</span>
+                                        <span class="v-val" id="phaser-rate-val">1</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="phaser-depth" class="v-slider" orient="vertical" min="0"
+                                            max="1" step="0.01" value="0">
+                                        <span class="v-label">Depth</span>
+                                        <span class="v-val" id="phaser-depth-val">0</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="phaser-feedback" class="v-slider" orient="vertical"
+                                            min="0" max="0.9" step="0.01" value="0.5">
+                                        <span class="v-label">Fdbk</span>
+                                        <span class="v-val" id="phaser-feedback-val">0.5</span>
                                     </div>
                                 </div>
                             </div>
@@ -365,6 +452,39 @@
                                             max="1" step="0.01" value="0">
                                         <span class="v-label">Mix</span>
                                         <span class="v-val" id="verb-mix-val">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Compressor Module -->
+                            <div class="effect-module">
+                                <div class="effect-header">
+                                    <span class="effect-title">Comp</span>
+                                </div>
+                                <div class="effect-controls">
+                                    <div class="v-slider-group">
+                                        <input type="range" id="comp-threshold" class="v-slider" orient="vertical"
+                                            min="-60" max="0" step="1" value="-24">
+                                        <span class="v-label">Thrsh</span>
+                                        <span class="v-val" id="comp-threshold-val">-24</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="comp-ratio" class="v-slider" orient="vertical" min="1"
+                                            max="20" step="0.1" value="12">
+                                        <span class="v-label">Ratio</span>
+                                        <span class="v-val" id="comp-ratio-val">12</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="comp-attack" class="v-slider" orient="vertical" min="0"
+                                            max="1" step="0.001" value="0.003">
+                                        <span class="v-label">Attk</span>
+                                        <span class="v-val" id="comp-attack-val">0.003</span>
+                                    </div>
+                                    <div class="v-slider-group">
+                                        <input type="range" id="comp-release" class="v-slider" orient="vertical" min="0"
+                                            max="1" step="0.01" value="0.25">
+                                        <span class="v-label">Rel</span>
+                                        <span class="v-val" id="comp-release-val">0.25</span>
                                     </div>
                                 </div>
                             </div>

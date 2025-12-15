@@ -375,7 +375,7 @@ input:checked+.slider:before {
     gap: 8px;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: fit-content;
+    max-height: 600px;
     padding-right: 5px;
 }
 
